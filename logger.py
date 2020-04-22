@@ -14,19 +14,15 @@ tilt = np.arange(0,10,Ts)
 
 serdev = '/dev/ttyACM0'
 s = serial.Serial(serdev,115200)
-for i in range(300):
+for i in range(400):
     line=s.readline()
     #print (line)
-    if(i%3 == 0): x[int(i/3)] = float(line)
-    elif(i%3 == 1): y[int(i/3)] = float(line)
-    elif(i%3 == 2): z[int(i/3)] = float(line)
+    if(i%4 == 0): x[int(i/4)] = float(line)
+    elif(i%4 == 1): y[int(i/4)] = float(line)
+    elif(i%4 == 2): z[int(i/4)] = float(line)
+    elif(i%4 == 3): tilt[int(i/4)] = float(line)
    
 
-for i in range(100):
-    if z[i]<0.5 or abs(x[i])>0.5 or abs(y[i])>0.5:
-        tilt[i]=1
-    else:
-        tilt[i]=0
 
 fig, ax = plt.subplots(2, 1)
 

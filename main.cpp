@@ -37,21 +37,34 @@ void FXOS8700CQ_readRegs(int addr, uint8_t * data, int len) {
 void FXOS8700CQ_writeRegs(uint8_t * data, int len) {
    i2c.write(m_addr, (char *)data, len);
 }
-float t[3];
+void blink(){
+   redled = !redled;
+}
+float t[4];
 void record(){
+    if (t[2]<0.5|| abs(t[0])>0.5 || abs(t[1])>0.5)
+      t[3]=1;
+    else
+      t[3]=0;
     pc.printf("%1.4f\r\n",t[0]);
     pc.printf("%1.4f\r\n",t[1]);
     pc.printf("%1.4f\r\n",t[2]);
-   redled = !redled;
-   wait(0.1);
+    pc.printf("%1.4f\r\n",t[3]);
 }
 
-void btn_p()  {
-    int i;
-    for (i=0; i<100; i++){
-        queue1.call(record);
-    }   
+int id_r = 0;
+int id_b = 0;
+void stop(){
+   queue1.cancel(id_b);
+   redled=1;
+   queue1.cancel(id_r);
 }
+void btn_p()  {
+   id_r = queue1.call_every(100,record);
+   id_b = queue1.call_every(300,blink);
+   queue1.call_in(10100,stop);
+}
+
 
 int main() {
     pc.baud(115200);
